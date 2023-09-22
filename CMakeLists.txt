@@ -8,13 +8,13 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(Eigen3 REQUIRED)
 ADD_DEFINITIONS(-DEIGEN_NO_DEBUG)
 include_directories(${EIGEN3_INCLUDE_DIR})
-include_directories("./")
+include_directories("./cpp")
 include_directories("./matplotlib-cpp/")
 
-find_package(PythonLibs 3 REQUIRED)
-include_directories(${PYTHON_INCLUDE_DIRS})
-add_executable(dirrt main.cpp)
-target_link_libraries(dirrt ${PYTHON_LIBRARIES})
+# find_package(PythonLibs 3 REQUIRED)
+# include_directories(${PYTHON_INCLUDE_DIRS})
+# add_executable(dirrt main.cpp)
+# target_link_libraries(dirrt ${PYTHON_LIBRARIES})
 
 # test google test 
 enable_testing()
