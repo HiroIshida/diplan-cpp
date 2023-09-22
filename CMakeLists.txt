@@ -13,7 +13,7 @@ include_directories("./matplotlib-cpp/")
 
 find_package(PythonLibs 3 REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
-add_executable(example example.cpp)
+add_executable(example fmt_example.cpp)
 target_link_libraries(example ${PYTHON_LIBRARIES})
 
 
