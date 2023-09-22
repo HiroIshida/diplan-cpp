@@ -48,8 +48,8 @@ int main(){
           std::vector<double> xs;
           std::vector<double> ys;
           auto parent = node->parent;
-          auto traj = di::TrajectoryPiece(parent->state, node->state, *node->duration_to_parent);
-          for(double t = 0.0; t < *node->duration_to_parent; t += rrt.dt_resolution_){
+          auto traj = di::TrajectoryPiece(parent->state, node->state, *node->duration_from_parent);
+          for(double t = 0.0; t < *node->duration_from_parent; t += rrt.dt_resolution_){
             auto state = traj.interpolate(t);
             xs.push_back(state.x(0));
             ys.push_back(state.x(1));
@@ -80,8 +80,8 @@ int main(){
           std::vector<double> xs;
           std::vector<double> ys;
           auto parent = node->parent;
-          auto traj = di::TrajectoryPiece(parent->state, node->state, *node->duration_to_parent);
-          for(double t = 0.0; t < *node->duration_to_parent; t += rrt.dt_resolution_){
+          auto traj = di::TrajectoryPiece(parent->state, node->state, *node->duration_from_parent);
+          for(double t = 0.0; t < *node->duration_from_parent; t += rrt.dt_resolution_){
             auto state = traj.interpolate(t);
             xs.push_back(state.x(0));
             ys.push_back(state.x(1));

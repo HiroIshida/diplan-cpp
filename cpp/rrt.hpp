@@ -11,8 +11,9 @@ namespace di = double_integrator;
 
 struct Node {
   di::State state;
-  std::optional<double> duration_to_parent;
   std::shared_ptr<Node> parent;
+  std::optional<double> duration_from_parent;
+  std::optional<double> cost_from_parent;
 };
 
 enum class ExtendResult { REACHED, ADVANCED, TRAPPED };
@@ -26,7 +27,8 @@ public:
       : start_(start), goal_(goal), is_obstacle_free_(is_obstacle_free),
         state_bound_(state_bound), dt_extend_(dt_extend),
         dt_resolution_(dt_resolution) {
-    this->nodes_.push_back(std::make_shared<Node>(Node{start, {}, nullptr}));
+    this->nodes_.push_back(
+        std::make_shared<Node>(Node{start, nullptr, {}, {}}));
   }
 
   bool is_valid(const di::State &state) const {
@@ -63,7 +65,7 @@ public:
       if (not is_valid(state)) {
         if (state_to_add.has_value()) {
           this->nodes_.push_back(
-              std::make_shared<Node>(Node{*state_to_add, t, nearest_node}));
+              std::make_shared<Node>(Node{*state_to_add, nearest_node, t, {}}));
         }
         return er;
       } else {
@@ -74,7 +76,7 @@ public:
     }
     if (state_to_add.has_value()) {
       this->nodes_.push_back(std::make_shared<Node>(
-          Node{*state_to_add, dt_extend_, nearest_node}));
+          Node{*state_to_add, nearest_node, dt_extend_, {}}));
     }
     return ExtendResult::REACHED;
   }
@@ -103,7 +105,7 @@ public:
 
           if (is_connectable()) {
             nodes_.push_back(std::make_shared<Node>(
-                Node{goal_, time_optimal, nodes_.back()}));
+                Node{goal_, nodes_.back(), time_optimal}));
             return true;
           }
         }
