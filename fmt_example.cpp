@@ -21,7 +21,7 @@ int main(){
     auto start = di::State(0.1, 0.1, 0, 0);
     auto goal = di::State(0.9, 0.9, 0, 0);
     auto sbound = di::BoundingBox(di::State(0, 0, -0.3, -0.3), di::State(1.0, 1.0, 0.3, 0.3));
-    auto fmt = rrt::FastMarchingTree(start, goal, is_obstacle_free, sbound, 0.01, 4.0, 2000);
+    auto fmt = rrt::FastMarchingTree(start, goal, is_obstacle_free, sbound, 0.01, 1.0, 2000);
     // measure time
     auto start_time = std::chrono::system_clock::now();
     while(true){
@@ -78,24 +78,20 @@ int main(){
     {
       std::vector<double> xs;
       std::vector<double> ys;
-      for(const auto& node: solution) { 
-        if(node != nullptr && node->parent != nullptr){
-          // create traj
-          auto traj = di::TrajectoryPiece(node->parent->state, node->state, *node->duration_from_parent);
-          for(double t = 0.0; t < *node->duration_from_parent; t += fmt.dt_){
+      for(const auto& traj: solution) {
+          for(double t = 0.0; t < traj.duration_; t += fmt.dt_){
             auto state = traj.interpolate(t);
             xs.push_back(state.x(0));
             ys.push_back(state.x(1));
           }
-          xs.push_back(node->state.x(0));
-          ys.push_back(node->state.x(1));
+          auto state = traj.interpolate(traj.duration_);
+          xs.push_back(state.x(0));
+          ys.push_back(state.x(1));
           std::map<std::string, std::string> keywords;
           keywords["color"] = "b";
           keywords["linewidth"] = "1.0";
           plt::plot(xs, ys, keywords);
         }
-      }
-
     }
     plt::show();
 }

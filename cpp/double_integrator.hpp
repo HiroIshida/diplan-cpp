@@ -120,14 +120,16 @@ BoundingBox backward_reachable_box(const State &state, double r) {
 }
 
 class TrajectoryPiece {
+public:
+  double duration_;
+
 private:
   Eigen::Vector4d _d;
-  double _duration;
   Eigen::Vector4d _s1;
 
 public:
   TrajectoryPiece(const State &s0, const State &s1, double duration)
-      : _duration(duration) {
+      : duration_(duration) {
     Eigen::Vector2d x0 = s0.x;
     Eigen::Vector2d v0 = s0.v;
     Eigen::Vector2d x1 = s1.x;
@@ -146,7 +148,7 @@ public:
   }
 
   State interpolate(double t) const {
-    double s = t - _duration;
+    double s = t - duration_;
     Eigen::Matrix4d M_left = Eigen::Matrix4d::Zero();
     Eigen::Matrix4d M_right = Eigen::Matrix4d::Zero();
 

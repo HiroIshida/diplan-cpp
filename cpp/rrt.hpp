@@ -281,11 +281,12 @@ public:
     return is_obstacle_free_(state) and state_bound_.is_inside(state);
   }
 
-  std::vector<std::shared_ptr<NodeWithStatus>> get_solution() const {
-    std::vector<std::shared_ptr<NodeWithStatus>> solution;
+  std::vector<di::TrajectoryPiece> get_solution() const {
+    std::vector<di::TrajectoryPiece> solution;
     auto node = nodes_.back();
-    while (node != nullptr) {
-      solution.push_back(node);
+    while (node->parent != nullptr) {
+      solution.push_back(di::TrajectoryPiece(node->parent->state, node->state,
+                                             *node->duration_from_parent));
       node = node->parent;
     }
     std::reverse(solution.begin(), solution.end());
