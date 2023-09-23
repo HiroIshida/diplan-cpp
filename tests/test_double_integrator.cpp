@@ -1,11 +1,11 @@
 #include "double_integrator.hpp"
 #include <gtest/gtest.h>
 
-namespace di = double_integrator;
+namespace dip = double_integrator_planning;
 
 TEST(DoubleIntegrator, OPTIMAL_COST) {
-  auto s0 = di::State(0.2, 0.3, 0, 0);
-  auto s1 = di::State(1, 1, 0, 0);
+  auto s0 = dip::State(0.2, 0.3, 0, 0);
+  auto s1 = dip::State(1, 1, 0, 0);
 
   auto [c, t] = optimal_cost(s0, s1);
   EXPECT_NEAR(c, 3.367317015231521, 1e-4);
@@ -13,9 +13,9 @@ TEST(DoubleIntegrator, OPTIMAL_COST) {
 }
 
 TEST(DoubleIntegrator, FORWARD_REACHABLE_BOX) {
-  auto s0 = di::State(0.2, 0.3, 0, 0);
-  auto s1 = di::State(1, 1, 0, 0);
-  auto box = di::forward_reachable_box(s0, 1.0);
+  auto s0 = dip::State(0.2, 0.3, 0, 0);
+  auto s1 = dip::State(1, 1, 0, 0);
+  auto box = dip::forward_reachable_box(s0, 1.0);
 
   ASSERT_TRUE(box.x_min.isApprox(
       Eigen::Vector2d(-0.022222222222222227, 0.07777777777777775), 1e-4));
@@ -26,9 +26,9 @@ TEST(DoubleIntegrator, FORWARD_REACHABLE_BOX) {
 }
 
 TEST(DoubleIntegrator, BACKWARD_REACHABLE_BOX) {
-  auto s0 = di::State(0.2, 0.3, 0, 0);
-  auto s1 = di::State(1, 1, 0, 0);
-  auto box = di::backward_reachable_box(s1, 1.0);
+  auto s0 = dip::State(0.2, 0.3, 0, 0);
+  auto s1 = dip::State(1, 1, 0, 0);
+  auto box = dip::backward_reachable_box(s1, 1.0);
   // ASSERT_TRUE(box.x_min.isApprox(Eigen::Vector2d(-0.022222222222222227,
   // 0.07777777777777775), 1e-4));
   // ASSERT_TRUE(box.x_max.isApprox(Eigen::Vector2d(0.4222222222222223,

@@ -6,12 +6,10 @@
 #include <memory>
 #include <optional>
 
-namespace rrt {
-
-namespace di = double_integrator;
+namespace double_integrator_planning {
 
 struct Node {
-  di::State state;
+  State state;
   std::shared_ptr<Node> parent;
   std::optional<double> duration_from_parent;
   std::optional<double> cost;
@@ -21,9 +19,9 @@ enum class ExtendResult { REACHED, ADVANCED, TRAPPED };
 
 class RRT {
 public:
-  RRT(const di::State &start, const di::State &goal,
-      std::function<bool(di::State)> is_obstacle_free,
-      const double_integrator::BoundingBox &state_bound, const double dt_extend,
+  RRT(const State &start, const State &goal,
+      std::function<bool(State)> is_obstacle_free,
+      const BoundingBox &state_bound, const double dt_extend,
       const double dt_resolution)
       : start_(start), goal_(goal), is_obstacle_free_(is_obstacle_free),
         state_bound_(state_bound), dt_extend_(dt_extend),
@@ -32,11 +30,11 @@ public:
         std::make_shared<Node>(Node{start, nullptr, {}, {}}));
   }
 
-  bool is_valid(const di::State &state) const {
+  bool is_valid(const State &state) const {
     return is_obstacle_free_(state) and state_bound_.is_inside(state);
   }
 
-  std::shared_ptr<Node> find_nearest(const di::State &state) const {
+  std::shared_ptr<Node> find_nearest(const State &state) const {
     std::shared_ptr<Node> nearest_node = nullptr;
     double min_dist = std::numeric_limits<double>::max();
     for (const auto &node : this->nodes_) {
@@ -49,17 +47,16 @@ public:
     return nearest_node;
   }
 
-  ExtendResult extend(const di::State &s_target) {
+  ExtendResult extend(const State &s_target) {
     if (!is_valid(s_target)) {
       return ExtendResult::TRAPPED;
     }
 
     const auto nearest_node = find_nearest(s_target);
-    auto [_, t_optimal] = di::optimal_cost(nearest_node->state, s_target);
-    auto traj_piece =
-        di::TrajectoryPiece(nearest_node->state, s_target, t_optimal);
+    auto [_, t_optimal] = optimal_cost(nearest_node->state, s_target);
+    auto traj_piece = TrajectoryPiece(nearest_node->state, s_target, t_optimal);
     double t = dt_resolution_;
-    std::optional<di::State> state_to_add = std::nullopt;
+    std::optional<State> state_to_add = std::nullopt;
     ExtendResult er = ExtendResult::TRAPPED;
     while (t < dt_extend_) {
       auto state = traj_piece.interpolate(t);
@@ -87,10 +84,10 @@ public:
       const auto s_rand = state_bound_.sample();
       const auto extend_result = extend(s_rand);
       if (extend_result != ExtendResult::TRAPPED) {
-        auto [time_optimal, _] = di::optimal_cost(nodes_.back()->state, goal_);
+        auto [time_optimal, _] = optimal_cost(nodes_.back()->state, goal_);
         if (time_optimal < dt_extend_) {
           auto traj_piece =
-              di::TrajectoryPiece(nodes_.back()->state, goal_, time_optimal);
+              TrajectoryPiece(nodes_.back()->state, goal_, time_optimal);
 
           auto is_connectable = [&]() {
             double t = dt_resolution_;
@@ -127,11 +124,11 @@ public:
   }
 
 public:
-  di::State start_;
-  di::State goal_;
+  State start_;
+  State goal_;
   // is obstacle free std::function
-  std::function<bool(di::State)> is_obstacle_free_;
-  double_integrator::BoundingBox state_bound_;
+  std::function<bool(State)> is_obstacle_free_;
+  BoundingBox state_bound_;
   double dt_extend_;
   double dt_resolution_;
   std::vector<std::shared_ptr<Node>> nodes_;
@@ -140,7 +137,7 @@ public:
 enum class FMTNodeStatus { UNVISITED, OPEN, CLOSED };
 
 struct NodeWithStatus {
-  di::State state;
+  State state;
   std::shared_ptr<NodeWithStatus> parent;
   std::optional<double> duration_from_parent;
   std::optional<double> cost;
@@ -149,10 +146,10 @@ struct NodeWithStatus {
 
 class FastMarchingTree {
 public:
-  FastMarchingTree(const di::State &start, const di::State &goal,
-                   std::function<bool(di::State)> is_obstacle_free,
-                   const double_integrator::BoundingBox &state_bound,
-                   double dt_resolution, double admissible_cost, size_t N)
+  FastMarchingTree(const State &start, const State &goal,
+                   std::function<bool(State)> is_obstacle_free,
+                   const BoundingBox &state_bound, double dt_resolution,
+                   double admissible_cost, size_t N)
       : start_(start), goal_(goal), is_obstacle_free_(is_obstacle_free),
         state_bound_(state_bound), dt_(dt_resolution),
         addmissible_cost_(admissible_cost) {
@@ -225,8 +222,8 @@ public:
       std::shared_ptr<NodeWithStatus> parent_optimal = nodes_cand[i_optimal];
       double time_optimal = times_cand[i_optimal];
       auto is_connectable = [&]() {
-        auto traj = di::TrajectoryPiece(parent_optimal->state, node->state,
-                                        time_optimal);
+        auto traj =
+            TrajectoryPiece(parent_optimal->state, node->state, time_optimal);
         for (double t = dt_; t < time_optimal; t += dt_) {
           if (!is_valid(traj.interpolate(t))) {
             return false;
@@ -248,7 +245,7 @@ public:
 
   std::tuple<std::vector<std::shared_ptr<NodeWithStatus>>, std::vector<double>,
              std::vector<double>>
-  filter_reachable(const di::State &s_center, double admisible_cost,
+  filter_reachable(const State &s_center, double admisible_cost,
                    FilterMode mode, FMTNodeStatus status,
                    bool return_costs) const {
     std::vector<std::shared_ptr<NodeWithStatus>> node_reachable;
@@ -256,15 +253,15 @@ public:
     std::vector<double> times_reachable;
 
     auto box = (mode == FilterMode::FORWARD)
-                   ? di::forward_reachable_box(s_center, admisible_cost)
-                   : di::backward_reachable_box(s_center, admisible_cost);
+                   ? forward_reachable_box(s_center, admisible_cost)
+                   : backward_reachable_box(s_center, admisible_cost);
     for (const auto &node : nodes_) {
       if (node->status != status)
         continue;
       if (box.is_inside(node->state)) {
         auto [c, t] = (mode == FilterMode::FORWARD)
-                          ? di::optimal_cost(s_center, node->state)
-                          : di::optimal_cost(node->state, s_center);
+                          ? optimal_cost(s_center, node->state)
+                          : optimal_cost(node->state, s_center);
         if (c < admisible_cost) {
           node_reachable.push_back(node);
           if (return_costs) {
@@ -277,16 +274,16 @@ public:
     return {node_reachable, costs_reachable, times_reachable};
   }
 
-  bool is_valid(const di::State &state) const {
+  bool is_valid(const State &state) const {
     return is_obstacle_free_(state) and state_bound_.is_inside(state);
   }
 
-  std::vector<di::TrajectoryPiece> get_solution() const {
-    std::vector<di::TrajectoryPiece> solution;
+  std::vector<TrajectoryPiece> get_solution() const {
+    std::vector<TrajectoryPiece> solution;
     auto node = nodes_.back();
     while (node->parent != nullptr) {
-      solution.push_back(di::TrajectoryPiece(node->parent->state, node->state,
-                                             *node->duration_from_parent));
+      solution.push_back(TrajectoryPiece(node->parent->state, node->state,
+                                         *node->duration_from_parent));
       node = node->parent;
     }
     std::reverse(solution.begin(), solution.end());
@@ -294,13 +291,13 @@ public:
   }
 
 public:
-  di::State start_;
-  di::State goal_;
+  State start_;
+  State goal_;
   std::vector<std::shared_ptr<NodeWithStatus>> nodes_;
-  std::function<bool(di::State)> is_obstacle_free_;
-  double_integrator::BoundingBox state_bound_;
+  std::function<bool(State)> is_obstacle_free_;
+  BoundingBox state_bound_;
   double addmissible_cost_;
   double dt_;
 };
 
-} // namespace rrt
+} // namespace double_integrator_planning

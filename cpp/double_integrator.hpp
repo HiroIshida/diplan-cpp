@@ -6,7 +6,7 @@
 
 #include "utils.hpp"
 
-namespace double_integrator {
+namespace double_integrator_planning {
 
 double bisection_newton(const std::function<double(double)> &f,
                         const std::function<double(double)> &df, double start,
@@ -167,4 +167,4 @@ public:
   }
 };
 
-} // namespace double_integrator
+} // namespace double_integrator_planning

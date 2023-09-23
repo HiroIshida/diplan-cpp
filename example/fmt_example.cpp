@@ -5,11 +5,11 @@
 #include <chrono>
 #include <vector>
 
-namespace di = double_integrator;
+namespace dip = double_integrator_planning;
 namespace plt = matplotlibcpp;
 
 int main() {
-  auto is_obstacle_free([](const di::State &state) -> bool {
+  auto is_obstacle_free([](const dip::State &state) -> bool {
     // circle obstacle at (0.5, 0.5) with radius 0.1
     if ((state.x - Eigen::Vector2d(0.5, 0.5)).norm() < 0.4) {
       return false;
@@ -17,11 +17,11 @@ int main() {
     return true;
   });
 
-  auto start = di::State(0.1, 0.1, 0, 0);
-  auto goal = di::State(0.9, 0.9, 0, 0);
-  auto sbound = di::BoundingBox(di::State(0, 0, -0.3, -0.3),
-                                di::State(1.0, 1.0, 0.3, 0.3));
-  auto fmt = rrt::FastMarchingTree(start, goal, is_obstacle_free, sbound, 0.01,
+  auto start = dip::State(0.1, 0.1, 0, 0);
+  auto goal = dip::State(0.9, 0.9, 0, 0);
+  auto sbound = dip::BoundingBox(dip::State(0, 0, -0.3, -0.3),
+                                 dip::State(1.0, 1.0, 0.3, 0.3));
+  auto fmt = dip::FastMarchingTree(start, goal, is_obstacle_free, sbound, 0.01,
                                    1.0, 2000);
   // measure time
   auto start_time = std::chrono::system_clock::now();
@@ -46,7 +46,7 @@ int main() {
   {
     std::vector<double> xs, ys;
     for (const auto &node : fmt.nodes_) {
-      if (node->status != rrt::FMTNodeStatus::UNVISITED) {
+      if (node->status != dip::FMTNodeStatus::UNVISITED) {
         xs.push_back(node->state.x(0));
         ys.push_back(node->state.x(1));
       }
@@ -57,12 +57,12 @@ int main() {
   // show all edges
   {
     for (const auto &node : fmt.nodes_) {
-      if (node->status != rrt::FMTNodeStatus::UNVISITED &&
+      if (node->status != dip::FMTNodeStatus::UNVISITED &&
           node->parent != nullptr) {
         std::vector<double> xs;
         std::vector<double> ys;
-        auto traj = di::TrajectoryPiece(node->parent->state, node->state,
-                                        *node->duration_from_parent);
+        auto traj = dip::TrajectoryPiece(node->parent->state, node->state,
+                                         *node->duration_from_parent);
         for (double t = 0.0; t < *node->duration_from_parent; t += fmt.dt_) {
           auto state = traj.interpolate(t);
           xs.push_back(state.x(0));

@@ -5,7 +5,7 @@
 #ifndef DOUBLE_INTEGRATOR_HPP
 #define DOUBLE_INTEGRATOR_HPP
 
-namespace double_integrator {
+namespace double_integrator_planning {
 
 struct State {
   // initialize state with 4 doubles
@@ -45,6 +45,6 @@ struct BoundingBox {
   };
 };
 
-} // namespace double_integrator
+} // namespace double_integrator_planning
 
-#endif // DOUBLE_INTEGRATOR_HPP
+#endif
