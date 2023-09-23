@@ -1,5 +1,5 @@
 #include "matplotlibcpp.h"
-#include "rrt.hpp"
+#include "sbmp.hpp"
 #include "utils.hpp"
 #include <Eigen/Dense>
 #include <chrono>

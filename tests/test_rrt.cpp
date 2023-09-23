@@ -1,4 +1,4 @@
-#include "rrt.hpp"
+#include "sbmp.hpp"
 #include "utils.hpp"
 #include <Eigen/Dense>
 #include <gtest/gtest.h>

@@ -1,4 +1,4 @@
-#include "rrt.hpp"
+#include "sbmp.hpp"
 
 namespace double_integrator_planning {
 
