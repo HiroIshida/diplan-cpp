@@ -8,7 +8,6 @@ from disbmp import BoundingBox, FastMarchingTree, State
 sbound = BoundingBox([0.0, 0.0, -0.2, -0.2], [1.0, 1.0, 0.2, 0.2])
 s0 = State([0.1, 0.1, 0.0, 0.0])
 s1 = State([0.9, 0.9, 0.0, 0.0])
-
 r = 0.4
 
 
@@ -31,10 +30,10 @@ motions = fmt.get_all_motions()
 fig, ax = plt.subplots()
 # for motion in motions:
 #     motion.visualize(ax, 0.1, kwargs_plot={'color': 'k', 'linewidth': 0.2}, kwargs_scatter={'color': 'k', 's': 0.5})
-for motion in solution:
-    motion.visualize(
-        ax, 0.1, kwargs_plot={"color": "red"}, kwargs_scatter={"color": "red"}
-    )
+T = solution.get_duration()
+times = np.linspace(0, T, 100)
+ps = np.array([solution.interpolate(t) for t in times])
+ax.plot(ps[:, 0], ps[:, 1], color="k", linewidth=0.5)
 
 # visualize circle
 circle = plt.Circle((0.5, 0.5), r, color="k", fill=False)

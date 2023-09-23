@@ -63,6 +63,20 @@ class TrajectoryPiece:
         ax.scatter(s_end[0], s_end[1], **kwargs_scatter)
 
 
+@dataclass
+class Trajectory:
+    @classmethod
+    def from_raw(cls, raw: _disbmp._Trajectory):
+        return cls(raw)
+
+    def interpolate(self, t: float) -> np.ndarray:
+        state: State = self.traj.interpolate(t)
+        return state.to_vector()
+
+    def get_duration(self) -> float:
+        return self.traj.duration()
+
+
 class FastMarchingTree(_disbmp._FastMarchingTree):
     def __init__(
         self,
@@ -87,10 +101,17 @@ class FastMarchingTree(_disbmp._FastMarchingTree):
     def solve(self, max_iter: int) -> bool:
         return super().solve(max_iter)
 
-    def get_solution(self) -> Sequence[TrajectoryPiece]:
-        raws = super().get_solution()
-        return [TrajectoryPiece.from_raw(raw) for raw in raws]
+    def get_solution(self) -> Trajectory:
+        raw = super().get_solution()
+        return Trajectory.from_raw(raw)
 
     def get_all_motions(self) -> Sequence[TrajectoryPiece]:
         raws = super().get_all_motions()
         return [TrajectoryPiece.from_raw(raw) for raw in raws]
+
+
+def resample(
+    traj: Sequence[TrajectoryPiece], resolution: float
+) -> Sequence[TrajectoryPiece]:
+    raws = _disbmp.resample([piece.traj_piece for piece in traj], resolution)
+    return [TrajectoryPiece.from_raw(raw) for raw in raws]

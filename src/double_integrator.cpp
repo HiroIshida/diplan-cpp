@@ -151,4 +151,26 @@ State TrajectoryPiece::interpolate(double t) const {
   return State{vec.head<2>(), vec.tail<2>()};
 }
 
+double Trajectory::get_duration() const {
+  double duration = 0;
+  for (const auto &piece : pieces) {
+    duration += piece.duration_;
+  }
+  return duration;
+}
+
+State Trajectory::interpolate(double t) const {
+  if (t < 0 || t > get_duration() + 1e-6) {
+    throw std::runtime_error("Trajectory::interpolate: t out of bounds");
+  }
+  double t_left = t;
+  for (const auto &piece : pieces) {
+    if (t_left < piece.duration_) {
+      return piece.interpolate(t_left);
+    }
+    t_left -= piece.duration_;
+  }
+  return pieces.back().interpolate(pieces.back().duration_);
+}
+
 } // namespace double_integrator_planning

@@ -83,7 +83,7 @@ int main() {
   {
     std::vector<double> xs;
     std::vector<double> ys;
-    for (const auto &traj : solution) {
+    for (const auto &traj : solution.pieces) {
       for (double t = 0.0; t < traj.duration_; t += fmt.dt_) {
         auto state = traj.interpolate(t);
         xs.push_back(state.x(0));

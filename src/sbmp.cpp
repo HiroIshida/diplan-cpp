@@ -251,7 +251,7 @@ bool FastMarchingTree::solve(size_t max_iter) {
   return false;
 }
 
-std::vector<TrajectoryPiece> FastMarchingTree::get_solution() const {
+Trajectory FastMarchingTree::get_solution() const {
   std::vector<TrajectoryPiece> solution;
   auto node = nodes_.back();
   while (node->parent != nullptr) {
@@ -260,7 +260,7 @@ std::vector<TrajectoryPiece> FastMarchingTree::get_solution() const {
     node = node->parent;
   }
   std::reverse(solution.begin(), solution.end());
-  return solution;
+  return Trajectory{solution};
 }
 
 std::vector<TrajectoryPiece> FastMarchingTree::get_all_motions() const {

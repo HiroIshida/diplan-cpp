@@ -31,4 +31,14 @@ public:
   State interpolate(double t) const;
 };
 
+struct Trajectory {
+  State get_start() const { return pieces.front().interpolate(0); }
+  State get_end() const {
+    return pieces.back().interpolate(pieces.back().duration_);
+  }
+  double get_duration() const;
+  State interpolate(double t) const;
+  std::vector<TrajectoryPiece> pieces;
+};
+
 } // namespace double_integrator_planning

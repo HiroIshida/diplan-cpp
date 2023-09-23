@@ -73,7 +73,7 @@ public:
                    FilterMode mode, FMTNodeStatus status,
                    bool return_costs) const;
   bool is_valid(const State &state) const;
-  std::vector<TrajectoryPiece> get_solution() const;
+  Trajectory get_solution() const;
   std::vector<TrajectoryPiece> get_all_motions() const;
 
 public:
