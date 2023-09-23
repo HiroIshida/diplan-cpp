@@ -18,11 +18,13 @@ target_link_libraries(example ${PYTHON_LIBRARIES})
 
 
 # test google test 
-# enable_testing()
-# find_package(GTest REQUIRED)
-# include_directories(${GTEST_INCLUDE_DIRS})
-# add_executable(test_di tests/test_double_integrator.cpp)
-# target_link_libraries(test_di ${GTEST_LIBRARIES} pthread)
-# 
-# add_executable(test_rrt tests/test_rrt.cpp)
-# target_link_libraries(test_rrt ${GTEST_LIBRARIES} pthread)
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
+add_executable(test_di tests/test_double_integrator.cpp)
+target_link_libraries(test_di ${GTEST_LIBRARIES} pthread)
+
+add_executable(test_rrt tests/test_rrt.cpp)
+target_link_libraries(test_rrt ${GTEST_LIBRARIES} pthread)
+add_test(NAME test_rrt COMMAND test_rrt)
+add_test(NAME test_di COMMAND test_di)
+enable_testing()
