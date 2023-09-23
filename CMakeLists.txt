@@ -8,14 +8,15 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(Eigen3 REQUIRED)
 ADD_DEFINITIONS(-DEIGEN_NO_DEBUG)
 include_directories(${EIGEN3_INCLUDE_DIR})
-include_directories("./cpp")
-include_directories("./matplotlib-cpp/")
+include_directories("cpp")
+include_directories("matplotlib-cpp/")
 
 find_package(PythonLibs 3 REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
-add_executable(example fmt_example.cpp)
-target_link_libraries(example ${PYTHON_LIBRARIES})
-
+add_executable(fmt_example example/fmt_example.cpp)
+target_link_libraries(fmt_example ${PYTHON_LIBRARIES})
+add_executable(rrt_example example/rrt_example.cpp)
+target_link_libraries(rrt_example ${PYTHON_LIBRARIES})
 
 # test google test 
 find_package(GTest REQUIRED)
