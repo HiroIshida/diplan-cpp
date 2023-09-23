@@ -2,7 +2,8 @@ import time
 
 import matplotlib.pyplot as plt
 import numpy as np
-from diplan import BoundingBox, FastMarchingTree, State
+
+from disbmp import BoundingBox, FastMarchingTree, State
 
 sbound = BoundingBox([0.0, 0.0, -0.2, -0.2], [1.0, 1.0, 0.2, 0.2])
 s0 = State([0.1, 0.1, 0.0, 0.0])
@@ -31,7 +32,9 @@ fig, ax = plt.subplots()
 # for motion in motions:
 #     motion.visualize(ax, 0.1, kwargs_plot={'color': 'k', 'linewidth': 0.2}, kwargs_scatter={'color': 'k', 's': 0.5})
 for motion in solution:
-    motion.visualize(ax, 0.1, kwargs_plot={"color": "red"}, kwargs_scatter={"color": "red"})
+    motion.visualize(
+        ax, 0.1, kwargs_plot={"color": "red"}, kwargs_scatter={"color": "red"}
+    )
 
 # visualize circle
 circle = plt.Circle((0.5, 0.5), r, color="k", fill=False)

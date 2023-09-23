@@ -4,10 +4,10 @@ from typing import Callable, Dict, Optional, Sequence, Union
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import _diplan
+from . import _disbmp
 
 
-class State(_diplan._State):
+class State(_disbmp._State):
     def __init__(self, s: Union[np.ndarray, Sequence]):
         if not isinstance(s, np.ndarray):
             s = np.array(s)
@@ -17,8 +17,10 @@ class State(_diplan._State):
         return super().to_vector()
 
 
-class BoundingBox(_diplan._BoundingBox):
-    def __init__(self, s_min: Union[np.ndarray, Sequence], s_max: Union[np.ndarray, Sequence]):
+class BoundingBox(_disbmp._BoundingBox):
+    def __init__(
+        self, s_min: Union[np.ndarray, Sequence], s_max: Union[np.ndarray, Sequence]
+    ):
         if not isinstance(s_min, np.ndarray):
             s_min = np.array(s_min)
         if not isinstance(s_max, np.ndarray):
@@ -28,10 +30,10 @@ class BoundingBox(_diplan._BoundingBox):
 
 @dataclass
 class TrajectoryPiece:
-    traj_piece: _diplan._TrajectoryPiece
+    traj_piece: _disbmp._TrajectoryPiece
 
     @classmethod
-    def from_raw(cls, raw: _diplan._TrajectoryPiece):
+    def from_raw(cls, raw: _disbmp._TrajectoryPiece):
         return cls(raw)
 
     def interpolate(self, t: float) -> np.ndarray:
@@ -61,7 +63,7 @@ class TrajectoryPiece:
         ax.scatter(s_end[0], s_end[1], **kwargs_scatter)
 
 
-class FastMarchingTree(_diplan._FastMarchingTree):
+class FastMarchingTree(_disbmp._FastMarchingTree):
     def __init__(
         self,
         start: State,
@@ -73,7 +75,13 @@ class FastMarchingTree(_diplan._FastMarchingTree):
         N_sample: int,
     ):
         super().__init__(
-            start, goal, is_obstacle_free, bounding_box, resolution, admissible_cost, N_sample
+            start,
+            goal,
+            is_obstacle_free,
+            bounding_box,
+            resolution,
+            admissible_cost,
+            N_sample,
         )
 
     def solve(self, max_iter: int) -> bool:

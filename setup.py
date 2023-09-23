@@ -4,13 +4,13 @@ except ImportError:
     raise Exception
 
 setup(
-    name="diplan",
+    name="disbmp",
     version="0.0.1",
     description="double integrator planner",
     author="Hirokazu Ishida",
     license="MIT",
-    packages=["diplan"],
+    packages=["disbmp"],
     package_dir={"": "python"},
-    cmake_install_dir="python/diplan/",
-    package_data={"diplan": ["py.typed"]},
+    cmake_install_dir="python/disbmp/",
+    package_data={"disbmp": ["py.typed"]},
 )

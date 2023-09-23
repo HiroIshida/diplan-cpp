@@ -7,7 +7,7 @@
 namespace py = pybind11;
 using namespace double_integrator_planning;
 
-PYBIND11_MODULE(_diplan, m) {
+PYBIND11_MODULE(_disbmp, m) {
   m.doc() = "Samplinng based double integrator planning";
   py::class_<State>(m, "_State")
       .def(py::init<double, double, double, double>())
