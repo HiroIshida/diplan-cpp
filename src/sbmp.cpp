@@ -263,4 +263,15 @@ std::vector<TrajectoryPiece> FastMarchingTree::get_solution() const {
   return solution;
 }
 
+std::vector<TrajectoryPiece> FastMarchingTree::get_all_motions() const {
+  std::vector<TrajectoryPiece> motions;
+  for (const auto &node : nodes_) {
+    if (node->parent != nullptr) {
+      motions.push_back(TrajectoryPiece(node->parent->state, node->state,
+                                        *node->duration_from_parent));
+    }
+  }
+  return motions;
+}
+
 } // namespace double_integrator_planning
