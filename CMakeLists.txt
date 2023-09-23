@@ -17,7 +17,7 @@ add_library(sbmp STATIC src/sbmp.cpp)
 target_link_libraries(sbmp double_integrator)
 
 option(BUILD_EXAMPLE "build google test" ON)
-IF(BUILD_EXAMPLES)
+IF(BUILD_EXAMPLE)
     find_package(PythonLibs 3 REQUIRED)
     include_directories(${PYTHON_INCLUDE_DIRS})
     add_executable(fmt_example example/fmt_example.cpp)
