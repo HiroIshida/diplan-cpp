@@ -65,6 +65,8 @@ class TrajectoryPiece:
 
 @dataclass
 class Trajectory:
+    traj: _disbmp._Trajectory
+
     @classmethod
     def from_raw(cls, raw: _disbmp._Trajectory):
         return cls(raw)
@@ -74,7 +76,7 @@ class Trajectory:
         return state.to_vector()
 
     def get_duration(self) -> float:
-        return self.traj.duration()
+        return self.traj.get_duration()
 
 
 class FastMarchingTree(_disbmp._FastMarchingTree):

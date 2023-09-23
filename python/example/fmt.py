@@ -18,7 +18,7 @@ def is_obstacle_free(s):
 
 
 N = 1000
-fmt = FastMarchingTree(s0, s1, is_obstacle_free, sbound, 0.1, 3.0, N)
+fmt = FastMarchingTree(s0, s1, is_obstacle_free, sbound, 0.1, 1.0, N)
 ts = time.time()
 is_solved = fmt.solve(N)
 print("Solved: {}, time: {}".format(is_solved, time.time() - ts))
@@ -28,12 +28,14 @@ solution = fmt.get_solution()
 motions = fmt.get_all_motions()
 
 fig, ax = plt.subplots()
-# for motion in motions:
-#     motion.visualize(ax, 0.1, kwargs_plot={'color': 'k', 'linewidth': 0.2}, kwargs_scatter={'color': 'k', 's': 0.5})
 T = solution.get_duration()
 times = np.linspace(0, T, 100)
 ps = np.array([solution.interpolate(t) for t in times])
 ax.plot(ps[:, 0], ps[:, 1], color="k", linewidth=0.5)
+
+# visualize start and goal
+ax.scatter(0.1, 0.1, color="r", s=10)
+ax.scatter(0.9, 0.9, color="g", s=10)
 
 # visualize circle
 circle = plt.Circle((0.5, 0.5), r, color="k", fill=False)
