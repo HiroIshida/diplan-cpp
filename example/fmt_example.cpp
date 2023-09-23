@@ -19,10 +19,11 @@ int main() {
 
   auto start = dip::State(0.1, 0.1, 0, 0);
   auto goal = dip::State(0.9, 0.9, 0, 0);
-  auto sbound = dip::BoundingBox(dip::State(0, 0, -0.3, -0.3),
-                                 dip::State(1.0, 1.0, 0.3, 0.3));
-  auto fmt = dip::FastMarchingTree(start, goal, is_obstacle_free, sbound, 0.01,
-                                   1.0, 2000);
+  auto v_abs_max = 0.5;
+  auto sbound = dip::BoundingBox(dip::State(0, 0, -v_abs_max, -v_abs_max),
+                                 dip::State(1.0, 1.0, v_abs_max, v_abs_max));
+  auto fmt = dip::FastMarchingTree(start, goal, is_obstacle_free, sbound, 0.1,
+                                   1.5, 6000);
   // measure time
   auto start_time = std::chrono::system_clock::now();
   while (true) {
