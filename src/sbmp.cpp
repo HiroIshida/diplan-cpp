@@ -238,6 +238,19 @@ bool FastMarchingTree::is_valid(const State &state) const {
   return is_obstacle_free_(state) and state_bound_.is_inside(state);
 }
 
+bool FastMarchingTree::solve(size_t max_iter) {
+  for (size_t i = 0; i < max_iter; ++i) {
+    extend();
+    if (is_solved()) {
+      return true;
+    }
+    if (is_failed()) {
+      return false;
+    }
+  }
+  return false;
+}
+
 std::vector<TrajectoryPiece> FastMarchingTree::get_solution() const {
   std::vector<TrajectoryPiece> solution;
   auto node = nodes_.back();

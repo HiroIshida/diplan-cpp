@@ -63,6 +63,7 @@ public:
   size_t get_num_status(FMTNodeStatus status);
 
   void extend();
+  bool solve(size_t max_iter);
 
   enum class FilterMode { FORWARD, BACKWARD };
 
@@ -80,8 +81,8 @@ public:
   std::vector<std::shared_ptr<NodeWithStatus>> nodes_;
   std::function<bool(State)> is_obstacle_free_;
   BoundingBox state_bound_;
-  double addmissible_cost_;
   double dt_;
+  double addmissible_cost_;
 };
 
 } // namespace double_integrator_planning
