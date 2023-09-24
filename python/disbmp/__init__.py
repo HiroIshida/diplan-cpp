@@ -62,6 +62,18 @@ class TrajectoryPiece:
         ax.scatter(s_start[0], s_start[1], **kwargs_scatter)
         ax.scatter(s_end[0], s_end[1], **kwargs_scatter)
 
+    def __getstate__(self):
+        state_dict = {}
+        state_dict["duration"] = self.traj_piece.duration
+        state_dict["d"] = self.traj_piece.d
+        state_dict["s1_vec"] = self.traj_piece.s1_vec
+        return state_dict
+
+    def __setstate__(self, state_dict):
+        self.traj_piece = _disbmp._TrajectoryPiece(
+            state_dict["duration"], state_dict["d"], state_dict["s1_vec"]
+        )
+
 
 @dataclass
 class Trajectory:
@@ -77,6 +89,18 @@ class Trajectory:
 
     def get_duration(self) -> float:
         return self.traj.get_duration()
+
+    def __getstate__(self):
+        state_dict = {}
+        raw_pieces = self.traj.pieces
+        pieces = [TrajectoryPiece.from_raw(raw_piece) for raw_piece in raw_pieces]
+        state_dict["pieces"] = pieces
+        return state_dict
+
+    def __setstate__(self, state_dict):
+        pieces = state_dict["pieces"]
+        raw_pieces = [p.traj_piece for p in pieces]
+        self.traj = _disbmp._Trajectory(raw_pieces)
 
 
 class FastMarchingTree(_disbmp._FastMarchingTree):

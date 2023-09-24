@@ -22,7 +22,9 @@ struct TrajectoryPiece {
   double duration;
   Eigen::Vector4d d;
   Eigen::Vector4d s1_vec;
-
+  TrajectoryPiece(double duration, const Eigen::Vector4d &d,
+                  const Eigen::Vector4d &s1_vec)
+      : duration(duration), d(d), s1_vec(s1_vec) {}
   TrajectoryPiece(const State &s0, const State &s1, double duration);
   State interpolate(double t) const;
 };

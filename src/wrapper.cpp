@@ -17,11 +17,17 @@ PYBIND11_MODULE(_disbmp, m) {
       .def(py::init<const State &, const State &>());
 
   py::class_<TrajectoryPiece>(m, "_TrajectoryPiece")
+      .def(py::init<double const, Eigen::Vector4d const &,
+                    Eigen::Vector4d const &>())
       .def(py::init<const State &, const State &, double>())
       .def_readonly("duration", &TrajectoryPiece::duration)
+      .def_readonly("d", &TrajectoryPiece::d)
+      .def_readonly("s1_vec", &TrajectoryPiece::s1_vec)
       .def("interpolate", &TrajectoryPiece::interpolate);
 
   py::class_<Trajectory>(m, "_Trajectory")
+      .def(py::init<std::vector<TrajectoryPiece>>())
+      .def_readonly("pieces", &Trajectory::pieces)
       .def("get_duration", &Trajectory::get_duration)
       .def("interpolate", &Trajectory::interpolate);
 
