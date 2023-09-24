@@ -18,15 +18,11 @@ BoundingBox forward_reachable_box(const State &state, double r);
 
 BoundingBox backward_reachable_box(const State &state, double r);
 
-class TrajectoryPiece {
-public:
-  double duration_;
+struct TrajectoryPiece {
+  double duration;
+  Eigen::Vector4d d;
+  Eigen::Vector4d s1_vec;
 
-private:
-  Eigen::Vector4d _d;
-  Eigen::Vector4d _s1;
-
-public:
   TrajectoryPiece(const State &s0, const State &s1, double duration);
   State interpolate(double t) const;
 };
@@ -34,7 +30,7 @@ public:
 struct Trajectory {
   State get_start() const { return pieces.front().interpolate(0); }
   State get_end() const {
-    return pieces.back().interpolate(pieces.back().duration_);
+    return pieces.back().interpolate(pieces.back().duration);
   }
   double get_duration() const;
   State interpolate(double t) const;

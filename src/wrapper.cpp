@@ -18,7 +18,7 @@ PYBIND11_MODULE(_disbmp, m) {
 
   py::class_<TrajectoryPiece>(m, "_TrajectoryPiece")
       .def(py::init<const State &, const State &, double>())
-      .def_readonly("duration", &TrajectoryPiece::duration_)
+      .def_readonly("duration", &TrajectoryPiece::duration)
       .def("interpolate", &TrajectoryPiece::interpolate);
 
   py::class_<Trajectory>(m, "_Trajectory")

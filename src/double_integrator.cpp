@@ -115,7 +115,7 @@ BoundingBox backward_reachable_box(const State &state, double r) {
 
 TrajectoryPiece::TrajectoryPiece(const State &s0, const State &s1,
                                  double duration)
-    : duration_(duration) {
+    : duration(duration), s1_vec(s1.to_vector()) {
   Eigen::Vector2d x0 = s0.x;
   Eigen::Vector2d v0 = s0.v;
   Eigen::Vector2d x1 = s1.x;
@@ -124,17 +124,15 @@ TrajectoryPiece::TrajectoryPiece(const State &s0, const State &s1,
   Eigen::Vector2d x01 = x1 - x0;
   Eigen::Vector2d v01 = v1 - v0;
 
-  _d.head<2>() =
+  d.head<2>() =
       -6.0 * v01 / (duration * duration) +
       12.0 * (-duration * v0 + x01) / (duration * duration * duration);
-  _d.tail<2>() = 4.0 * v01 / duration -
-                 6.0 * (-duration * v0 + x01) / (duration * duration);
-  // concat x and v into a single vector
-  _s1 = s1.to_vector();
+  d.tail<2>() = 4.0 * v01 / duration -
+                6.0 * (-duration * v0 + x01) / (duration * duration);
 }
 
 State TrajectoryPiece::interpolate(double t) const {
-  double s = t - duration_;
+  double s = t - duration;
   Eigen::Matrix4d M_left = Eigen::Matrix4d::Zero();
   Eigen::Matrix4d M_right = Eigen::Matrix4d::Zero();
 
@@ -147,14 +145,14 @@ State TrajectoryPiece::interpolate(double t) const {
   M_right.block<2, 2>(2, 0) = Eigen::Matrix2d::Identity() * (-s * s * 0.5);
   M_right.block<2, 2>(2, 2) = Eigen::Matrix2d::Identity() * s;
 
-  auto vec = M_left * _s1 + M_right * _d;
+  auto vec = M_left * s1_vec + M_right * d;
   return State{vec.head<2>(), vec.tail<2>()};
 }
 
 double Trajectory::get_duration() const {
   double duration = 0;
   for (const auto &piece : pieces) {
-    duration += piece.duration_;
+    duration += piece.duration;
   }
   return duration;
 }
@@ -165,12 +163,12 @@ State Trajectory::interpolate(double t) const {
   }
   double t_left = t;
   for (const auto &piece : pieces) {
-    if (t_left < piece.duration_) {
+    if (t_left < piece.duration) {
       return piece.interpolate(t_left);
     }
-    t_left -= piece.duration_;
+    t_left -= piece.duration;
   }
-  return pieces.back().interpolate(pieces.back().duration_);
+  return pieces.back().interpolate(pieces.back().duration);
 }
 
 } // namespace double_integrator_planning

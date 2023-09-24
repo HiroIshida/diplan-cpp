@@ -85,12 +85,12 @@ int main() {
     std::vector<double> xs;
     std::vector<double> ys;
     for (const auto &traj : solution.pieces) {
-      for (double t = 0.0; t < traj.duration_; t += fmt.dt_) {
+      for (double t = 0.0; t < traj.duration; t += fmt.dt_) {
         auto state = traj.interpolate(t);
         xs.push_back(state.x(0));
         ys.push_back(state.x(1));
       }
-      auto state = traj.interpolate(traj.duration_);
+      auto state = traj.interpolate(traj.duration);
       xs.push_back(state.x(0));
       ys.push_back(state.x(1));
       std::map<std::string, std::string> keywords;
