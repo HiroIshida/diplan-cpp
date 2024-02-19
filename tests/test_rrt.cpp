@@ -22,8 +22,8 @@ TEST(RRT, RRT) {
 
   bool is_solved = rrt.solve(100000);
   EXPECT_TRUE(is_solved);
-  auto nodes = rrt.get_solution();
-  EXPECT_TRUE(nodes.size() > 0);
+  auto trajectory = rrt.get_solution();
+  EXPECT_TRUE(trajectory.get_duration() > 0);
 }
 
 int main(int argc, char **argv) {

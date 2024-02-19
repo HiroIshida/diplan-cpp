@@ -64,7 +64,8 @@ int main() {
         std::vector<double> ys;
         auto traj = dip::TrajectoryPiece(node->parent->state, node->state,
                                          *node->duration_from_parent);
-        for (double t = 0.0; t < *node->duration_from_parent; t += fmt.dt_) {
+        for (double t = 0.0; t < *node->duration_from_parent;
+             t += fmt.dt_resolution_) {
           auto state = traj.interpolate(t);
           xs.push_back(state.x(0));
           ys.push_back(state.x(1));
@@ -85,7 +86,7 @@ int main() {
     std::vector<double> xs;
     std::vector<double> ys;
     for (const auto &traj : solution.pieces) {
-      for (double t = 0.0; t < traj.duration; t += fmt.dt_) {
+      for (double t = 0.0; t < traj.duration; t += fmt.dt_resolution_) {
         auto state = traj.interpolate(t);
         xs.push_back(state.x(0));
         ys.push_back(state.x(1));
