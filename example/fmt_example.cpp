@@ -42,63 +42,6 @@ int main() {
                      end_time - start_time)
                      .count();
   std::cout << "elapsed time: " << elapsed << "[ms]" << std::endl;
-
-  // visualize all visited state by scattering
-  {
-    std::vector<double> xs, ys;
-    for (const auto &node : fmt.nodes_) {
-      if (node->status != dip::FMTNodeStatus::UNVISITED) {
-        xs.push_back(node->state.x(0));
-        ys.push_back(node->state.x(1));
-      }
-    }
-    plt::scatter(xs, ys);
-  }
-
-  // show all edges
-  {
-    for (const auto &node : fmt.nodes_) {
-      if (node->status != dip::FMTNodeStatus::UNVISITED &&
-          node->parent != nullptr) {
-        std::vector<double> xs;
-        std::vector<double> ys;
-        auto traj = dip::TrajectoryPiece(node->parent->state, node->state,
-                                         *node->duration_from_parent);
-        for (double t = 0.0; t < *node->duration_from_parent;
-             t += fmt.dt_resolution_) {
-          auto state = traj.interpolate(t);
-          xs.push_back(state.x(0));
-          ys.push_back(state.x(1));
-        }
-        xs.push_back(node->state.x(0));
-        ys.push_back(node->state.x(1));
-        std::map<std::string, std::string> keywords;
-        keywords["color"] = "k";
-        keywords["linewidth"] = "0.3";
-        plt::plot(xs, ys, keywords);
-      }
-    }
-  }
-
-  // show solution path
-  auto solution = fmt.get_solution();
-  {
-    std::vector<double> xs;
-    std::vector<double> ys;
-    for (const auto &traj : solution.pieces) {
-      for (double t = 0.0; t < traj.duration; t += fmt.dt_resolution_) {
-        auto state = traj.interpolate(t);
-        xs.push_back(state.x(0));
-        ys.push_back(state.x(1));
-      }
-      auto state = traj.interpolate(traj.duration);
-      xs.push_back(state.x(0));
-      ys.push_back(state.x(1));
-      std::map<std::string, std::string> keywords;
-      keywords["color"] = "b";
-      keywords["linewidth"] = "1.0";
-      plt::plot(xs, ys, keywords);
-    }
-  }
+  fmt.visualize();
   plt::show();
 }
