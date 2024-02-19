@@ -6,15 +6,9 @@ RRT::RRT(const State &start, const State &goal,
          std::function<bool(State)> is_obstacle_free,
          const BoundingBox &state_bound, const double dt_extend,
          const double dt_resolution)
-    : start_(start), goal_(goal), is_obstacle_free_(is_obstacle_free),
-      state_bound_(state_bound), dt_extend_(dt_extend),
-      dt_resolution_(dt_resolution) {
-  this->nodes_.push_back(std::make_shared<Node>(Node{start, nullptr, {}, {}}));
-}
-
-bool RRT::is_valid(const State &state) const {
-  return is_obstacle_free_(state) and state_bound_.is_inside(state);
-}
+    : _PlannerBase<Node>(start, goal, is_obstacle_free, state_bound,
+                         dt_resolution),
+      dt_extend_(dt_extend) {}
 
 std::shared_ptr<Node> RRT::find_nearest(const State &state) const {
   std::shared_ptr<Node> nearest_node = nullptr;
@@ -94,28 +88,14 @@ bool RRT::solve(size_t max_iter) {
   return false;
 }
 
-std::vector<std::shared_ptr<Node>> RRT::get_solution() const {
-  std::vector<std::shared_ptr<Node>> solution;
-  auto node = nodes_.back();
-  while (node != nullptr) {
-    solution.push_back(node);
-    node = node->parent;
-  }
-  std::reverse(solution.begin(), solution.end());
-  return solution;
-}
-
 FastMarchingTree::FastMarchingTree(const State &start, const State &goal,
                                    std::function<bool(State)> is_obstacle_free,
                                    const BoundingBox &state_bound,
                                    double dt_resolution, double admissible_cost,
                                    size_t N)
-    : start_(start), goal_(goal), is_obstacle_free_(is_obstacle_free),
-      state_bound_(state_bound), dt_(dt_resolution),
+    : _PlannerBase<NodeWithStatus>(start, goal, is_obstacle_free, state_bound,
+                                   dt_resolution),
       addmissible_cost_(admissible_cost) {
-  nodes_.push_back(std::make_shared<NodeWithStatus>(
-      NodeWithStatus{start_, nullptr, {}, 0.0, FMTNodeStatus::OPEN}));
-  // sample N state
   for (size_t i = 0; i < N; ++i) {
     while (true) {
       auto s_rand = state_bound_.sample();
@@ -134,6 +114,7 @@ bool FastMarchingTree::is_solved() {
   auto &goal_node = nodes_.back();
   return goal_node->status != FMTNodeStatus::UNVISITED;
 }
+
 bool FastMarchingTree::is_failed() {
   return get_num_status(FMTNodeStatus::OPEN) == 0;
 }
@@ -186,7 +167,7 @@ void FastMarchingTree::extend() {
     auto is_connectable = [&]() {
       auto traj =
           TrajectoryPiece(parent_optimal->state, node->state, time_optimal);
-      for (double t = dt_; t < time_optimal; t += dt_) {
+      for (double t = dt_resolution_; t < time_optimal; t += dt_resolution_) {
         if (!is_valid(traj.interpolate(t))) {
           return false;
         }
@@ -234,10 +215,6 @@ FastMarchingTree::filter_reachable(const State &s_center, double admisible_cost,
   return {node_reachable, costs_reachable, times_reachable};
 }
 
-bool FastMarchingTree::is_valid(const State &state) const {
-  return is_obstacle_free_(state) and state_bound_.is_inside(state);
-}
-
 bool FastMarchingTree::solve(size_t max_iter) {
   for (size_t i = 0; i < max_iter; ++i) {
     extend();
@@ -249,29 +226,6 @@ bool FastMarchingTree::solve(size_t max_iter) {
     }
   }
   return false;
-}
-
-Trajectory FastMarchingTree::get_solution() const {
-  std::vector<TrajectoryPiece> solution;
-  auto node = nodes_.back();
-  while (node->parent != nullptr) {
-    solution.push_back(TrajectoryPiece(node->parent->state, node->state,
-                                       *node->duration_from_parent));
-    node = node->parent;
-  }
-  std::reverse(solution.begin(), solution.end());
-  return Trajectory{solution};
-}
-
-std::vector<TrajectoryPiece> FastMarchingTree::get_all_motions() const {
-  std::vector<TrajectoryPiece> motions;
-  for (const auto &node : nodes_) {
-    if (node->parent != nullptr) {
-      motions.push_back(TrajectoryPiece(node->parent->state, node->state,
-                                        *node->duration_from_parent));
-    }
-  }
-  return motions;
 }
 
 } // namespace double_integrator_planning
