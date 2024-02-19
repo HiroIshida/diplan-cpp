@@ -31,6 +31,12 @@ PYBIND11_MODULE(_disbmp, m) {
       .def("get_duration", &Trajectory::get_duration)
       .def("interpolate", &Trajectory::interpolate);
 
+  py::class_<RRT>(m, "_RRT")
+      .def(py::init<const State &, const State &, std::function<bool(State)>,
+                    const BoundingBox &, double, double>())
+      .def("solve", &RRT::solve)
+      .def("get_solution", &RRT::get_solution);
+
   py::class_<FastMarchingTree>(m, "_FastMarchingTree")
       .def(py::init<const State &, const State &, std::function<bool(State)>,
                     const BoundingBox &, double, double, size_t>())

@@ -103,6 +103,28 @@ class Trajectory:
         self.traj = _disbmp._Trajectory(raw_pieces)
 
 
+class RRT(_disbmp._RRT):
+    def __init__(
+        self,
+        start: State,
+        goal: State,
+        is_obstacle_free: Callable[[State], bool],
+        bounding_box: BoundingBox,
+        t_extension: float,
+        resolution: float,
+    ):
+        super().__init__(
+            start, goal, is_obstacle_free, bounding_box, t_extension, resolution
+        )
+
+    def solve(self, max_iter: int) -> bool:
+        return super().solve(max_iter)
+
+    def get_solution(self) -> Trajectory:
+        raw = super().get_solution()
+        return Trajectory.from_raw(raw)
+
+
 class FastMarchingTree(_disbmp._FastMarchingTree):
     def __init__(
         self,
