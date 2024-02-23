@@ -1,11 +1,14 @@
 #include "double_integrator.hpp"
-#include "matplotlibcpp.h"
 #include "utils.hpp"
 #include <Eigen/Dense>
 #include <algorithm>
 #include <functional>
 #include <memory>
 #include <optional>
+
+#ifdef COMPILE_WITH_MATPLOTLIB
+#include "matplotlibcpp.h"
+#endif
 
 namespace double_integrator_planning {
 
@@ -57,6 +60,7 @@ public:
   }
 
   void visualize() const {
+#ifdef COMPILE_WITH_MATPLOTLIB
 
     // plot nodes
     {
@@ -120,6 +124,11 @@ public:
     std::map<std::string, std::string> keywords;
     keywords["color"] = "red";
     matplotlibcpp::scatter(xs_tip, ys_tip, 30, keywords);
+#else
+    std::cout << "Matplotlib is not available. Please compile with "
+                 "COMPILE_WITH_MATPLOTLIB=ON"
+              << std::endl;
+#endif
   }
 
   virtual bool solve(size_t max_iter) = 0;

@@ -9,7 +9,7 @@ git clone git@github.com:HiroIshida/diplan-cpp.git
 cd diplan-cpp
 git submodule update --init --recursive --recommend-shallow --depth 1
 mkdir build && cd build
-cmake .. && make -j4
+cmake .. -DWITH_MATPLOTLIB=ON && make -j4
 ./fmt_example  # run
 ```
 
