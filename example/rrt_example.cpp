@@ -19,21 +19,21 @@ int main() {
 
   auto start = dip::State(0.1, 0.1, 0, 0);
   auto goal = dip::State(0.9, 0.9, 0, 0);
-  auto sbound = dip::BoundingBox(dip::State(0, 0, -0.3, -0.3),
-                                 dip::State(1.0, 1.0, 0.3, 0.3));
-  auto rrt = dip::RRT(start, goal, is_obstacle_free, sbound, 0.3, 0.1);
+  auto sbound = dip::BoundingBox(dip::State(0, 0, -0.5, -0.5),
+                                 dip::State(1.0, 1.0, 0.5, 0.5));
+  auto rrt = dip::RRT(start, goal, is_obstacle_free, sbound, 0.5, 0.1);
 
   // measure solving time in microseconds
   auto start_time = std::chrono::system_clock::now();
   bool is_solved = rrt.solve(100000);
+  std::cout << "solved: " << is_solved << std::endl;
   auto end_time = std::chrono::system_clock::now();
   auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
                      end_time - start_time)
                      .count();
   std::cout << "elapsed time: " << elapsed << "[mu-s]" << std::endl;
-  double L = rrt.get_solution().get_length();
-  std::cout << "path length: " << L << std::endl;
-
+  std::cout << "length of nodes: " << rrt.get_solution().get_length()
+            << std::endl;
   rrt.visualize();
   plt::show();
 }
