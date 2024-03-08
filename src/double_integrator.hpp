@@ -27,6 +27,7 @@ struct TrajectoryPiece {
       : duration(duration), d(d), s1_vec(s1_vec) {}
   TrajectoryPiece(const State &s0, const State &s1, double duration);
   State interpolate(double t) const;
+  double get_length(size_t n_split) const;
 };
 
 struct Trajectory {
@@ -37,6 +38,7 @@ struct Trajectory {
   double get_duration() const;
   State interpolate(double t) const;
   std::vector<TrajectoryPiece> pieces;
+  double get_length(size_t n_split = 20) const;
 };
 
 } // namespace double_integrator_planning

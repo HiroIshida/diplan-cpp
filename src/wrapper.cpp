@@ -29,6 +29,7 @@ PYBIND11_MODULE(_disbmp, m) {
       .def(py::init<std::vector<TrajectoryPiece>>())
       .def_readonly("pieces", &Trajectory::pieces)
       .def("get_duration", &Trajectory::get_duration)
+      .def("get_length", &Trajectory::get_length)
       .def("interpolate", &Trajectory::interpolate);
 
   py::class_<RRT>(m, "_RRT")

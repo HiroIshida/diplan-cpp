@@ -23,6 +23,7 @@ ts = time.time()
 is_solved = fmt.solve(N)
 print("Solved: {}, time: {}".format(is_solved, time.time() - ts))
 assert is_solved
+print(f"solution length: {fmt.get_solution().get_length()}")
 
 solution = fmt.get_solution()
 motions = fmt.get_all_motions()

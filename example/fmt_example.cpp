@@ -42,6 +42,8 @@ int main() {
                      end_time - start_time)
                      .count();
   std::cout << "elapsed time: " << elapsed << "[ms]" << std::endl;
+  double L = fmt.get_solution().get_length();
+  std::cout << "path length: " << L << std::endl;
   fmt.visualize();
   plt::show();
 }

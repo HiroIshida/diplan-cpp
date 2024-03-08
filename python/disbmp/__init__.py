@@ -90,6 +90,9 @@ class Trajectory:
     def get_duration(self) -> float:
         return self.traj.get_duration()
 
+    def get_length(self, n_split: int = 20) -> float:
+        return self.traj.get_length(n_split)
+
     def __getstate__(self):
         state_dict = {}
         raw_pieces = self.traj.pieces

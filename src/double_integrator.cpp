@@ -149,6 +149,17 @@ State TrajectoryPiece::interpolate(double t) const {
   return State{vec.head<2>(), vec.tail<2>()};
 }
 
+double TrajectoryPiece::get_length(size_t n_split) const {
+  // this can be actually computed analytically but it's not worth the effort
+  // as this will be used to analyze the performance of the planner
+  double dist = 0;
+  double dt = duration / n_split;
+  for (size_t i = 0; i < n_split; ++i) {
+    dist += interpolate(i * dt).v.norm() * dt;
+  }
+  return dist;
+}
+
 double Trajectory::get_duration() const {
   double duration = 0;
   for (const auto &piece : pieces) {
@@ -169,6 +180,14 @@ State Trajectory::interpolate(double t) const {
     t_left -= piece.duration;
   }
   return pieces.back().interpolate(pieces.back().duration);
+}
+
+double Trajectory::get_length(size_t n_split) const {
+  double dist = 0;
+  for (const auto &piece : pieces) {
+    dist += piece.get_length(n_split);
+  }
+  return dist;
 }
 
 } // namespace double_integrator_planning
